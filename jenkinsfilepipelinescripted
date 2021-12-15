@@ -1,0 +1,22 @@
+node {
+    def mavenHome=tool name:"maven3.8.3"
+    properties([pipelineTriggers([pollSCM('* * * * *')])])
+    stage('CheckOutCode')
+    {
+       git branch: 'development', credentialsId: '883a1995-9126-406b-a7ca-15bb9976513d', url: 'https://github.com/muzayeenmulla/maven-web-application.git' 
+    }
+    stage('Build') {
+        sh "${mavenHome}/bin/mvn clean package"
+    }
+    stage('ExecuteSonarQubeReport') {
+        sh "${mavenHome}/bin/mvn sonar:sonar"
+    }
+    stage('UploadArtifactsIntoNexusRepo') {
+        sh "${mavenHome}/bin/mvn deploy"
+    }
+    stage('DeployAppllicationIntoTomcatServer') {
+        sshagent(['c1b1e233-3b05-4207-8219-1949ed086697']) {
+            sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.234.48.70:/opt/apache-tomcat-9.0.54/webapps/"
+        }
+    }
+}
