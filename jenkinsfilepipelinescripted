@@ -8,7 +8,7 @@ node {
     stage('Build') {
         sh "${mavenHome}/bin/mvn clean package"
     }
-    stage('ExecuteSonarQubeReport') {
+   /* stage('ExecuteSonarQubeReport') {
         sh "${mavenHome}/bin/mvn sonar:sonar"
     }
     stage('UploadArtifactsIntoNexusRepo') {
@@ -19,4 +19,5 @@ node {
             sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.234.48.70:/opt/apache-tomcat-9.0.54/webapps/"
         }
     }
+    */
 }
